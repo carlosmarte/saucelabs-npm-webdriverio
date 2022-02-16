@@ -10,12 +10,18 @@ import AbortController from "abort-controller";
 import fetch from "node-fetch";
 import path from "path";
 import { remote } from "webdriverio";
+import axeCore from "axe-core";
+import jsonfile from "jsonfile";
+import axe from "axe-core";
+import mkdirp from "mkdirp";
 
 const RUN_ON_SAUCELABS = false;
 
 (async () => {
   const saucelabs = new SauceLabs.default({
     logfile: path.join(process.cwd(), "saucelabs.log"),
+    headless: true,
+    region: "us-east-1",
   });
 
   const controller = new AbortController();
@@ -63,6 +69,41 @@ const RUN_ON_SAUCELABS = false;
   await browser.url("https://webdriver.io/");
   const pageTitle = await browser.getTitle();
   const sessionId = browser.sessionId;
+
+  await browser.execute(axeCore.source);
+
+  const axeCoreConfig = {
+    run: ["wcag2a"],
+  };
+
+  const [axeCoreError, entry] = await browser.executeAsync(function (
+    axeCoreConfig,
+    done
+  ) {
+    if (typeof window.axe === "undefined" || typeof axe.run !== "function") {
+      return done([new Error("axe-core is missing")]);
+    }
+
+    const context = window.document;
+    axe
+      .run(context, axeCoreConfig)
+      .then(function (entry) {
+        done([null, entry]);
+      })
+      .catch(function (error) {
+        done([error]);
+      });
+  },
+  axeCoreConfig);
+
+  if (axeCoreError) throw axeCoreError;
+
+  mkdirp.sync(path.join(process.cwd(), ".tmp"));
+
+  const axeCoreSaveToPath = path.join(process.cwd(), ".tmp/testing.json");
+  await jsonfile.writeFileSync(axeCoreSaveToPath, entry, {
+    spaces: 2,
+  });
 
   console.log(`${pageTitle}: https://app.saucelabs.com/tests/${sessionId}`);
 
