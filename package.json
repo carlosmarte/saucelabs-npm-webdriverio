@@ -1,5 +1,5 @@
 {
-  "name": "saucelabs-npm-webdriverio",
+  "name": "example-npm-saucelabs",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,14 +8,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/carlosmarte/saucelabs-npm-webdriverio.git"
+    "url": "git+https://github.com/carlosmarte/example-npm-saucelabs.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/carlosmarte/saucelabs-npm-webdriverio/issues"
+    "url": "https://github.com/carlosmarte/example-npm-saucelabs/issues"
   },
-  "homepage": "https://github.com/carlosmarte/saucelabs-npm-webdriverio#readme",
+  "homepage": "https://github.com/carlosmarte/example-npm-saucelabs#readme",
   "devDependencies": {
     "abort-controller": "^3.0.0",
     "global-agent": "^3.0.0",
